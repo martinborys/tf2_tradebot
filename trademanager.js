@@ -26,15 +26,6 @@ client.on('loggedOn', () => {
   
     client.setPersona(SteamUser.EPersonaState.Online);
     client.gamesPlayed(440);
-
-    client.getAuthSecret((err, secret, key) => {
-      if(err){
-        console.log(err);
-      } else {
-        console.log(secret);
-        console.log(key);
-      }
-    });
   });
 
 client.on('webSession', (sessionid, cookies) => {
@@ -42,7 +33,6 @@ client.on('webSession', (sessionid, cookies) => {
   
     community.setCookies(cookies);
     community.startConfirmationChecker(10000, 'identity_secret');
-    console.log(cookies);
   });
 
 manager.on('newOffer', offer => {
@@ -82,7 +72,10 @@ function printInventory() {
       if (err) {
         console.log(err);
       } else {
-      console.log(inventory);
+        console.log("Printing Tradeable Inventory Contents:")
+        inventory.forEach(item => {
+          console.log(item.name, item.amount);
+      });
     }
   });
 }
