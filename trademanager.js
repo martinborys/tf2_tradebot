@@ -16,7 +16,7 @@ const manager = new TradeOfferManager({
 const logOnOptions = {
     accountName: config.username,
     password: config.password,
-    //twoFactorCode: SteamTotp.generateAuthCode(config.sharedSecret)
+    twoFactorCode: SteamTotp.generateAuthCode(config.sharedSecret)
 };
 
 client.logOn(logOnOptions);
@@ -26,6 +26,15 @@ client.on('loggedOn', () => {
   
     client.setPersona(SteamUser.EPersonaState.Online);
     client.gamesPlayed(440);
+
+    client.getAuthSecret((err, secret, key) => {
+      if(err){
+        console.log(err);
+      } else {
+        console.log(secret);
+        console.log(key);
+      }
+    });
   });
 
 client.on('webSession', (sessionid, cookies) => {
@@ -34,14 +43,6 @@ client.on('webSession', (sessionid, cookies) => {
     community.setCookies(cookies);
     community.startConfirmationChecker(10000, 'identity_secret');
     console.log(cookies);
-    
-    client.enableTwoFactor( (err, response) => {
-      if(err) {
-        console.log(err);
-      } else {
-        console.log(response);
-      }
-    });
   });
 
 manager.on('newOffer', offer => {
