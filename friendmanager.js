@@ -1,3 +1,5 @@
+module.exports = startupFriendService;
+
 function startupFriendService(client) {
   client.on('friendRelationship', (steamid, relationship) => {
     if (relationship === 2) {
