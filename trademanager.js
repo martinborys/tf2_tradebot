@@ -25,40 +25,42 @@ const logOnOptions = {
 
 client.logOn(logOnOptions);
 
-// when successfully logged on
-client.on("loggedOn", () => {
-  console.log("Logged into Steam");
-  console.log(`Two Factor code: ${twoFactorCode}`);
+client.on('loggedOn', () => {
+    console.log('Logged into Steam');
+  
+    client.setPersona(SteamUser.EPersonaState.Online);
+    client.gamesPlayed(440);
 
-  client.setPersona(SteamUser.EPersonaState.LookingToTrade);
-  client.gamesPlayed(440);
-});
-
-// when steamcommunity connection established
-client.on("webSession", (sessionid, cookies) => {
-  manager.setCookies(cookies);
-
-  community.setCookies(cookies);
-  community.startConfirmationChecker(10000, "identity_secret");
-  helpers.printInventory(manager);
-});
-
-// TRADE OFFER SECTION
-
-// when new offer received
-manager.on("newOffer", (offer) => {
-  console.log("New Offer Received: ");
-
-  // check if offer is from trusted user
-  if (offer.partner.getSteamID64() === config.trustedUser) {
-    offer.accept((err, status) => {
-      if (err) {
+    client.getAuthSecret((err, secret, key) => {
+      if(err){
         console.log(err);
       } else {
-        console.log(`Accepted offer. Status: ${status}.`);
+        console.log(secret);
+        console.log(key);
       }
     });
-  }
+  });
+
+client.on('webSession', (sessionid, cookies) => {
+    manager.setCookies(cookies);
+  
+    community.setCookies(cookies);
+    community.startConfirmationChecker(10000, 'identity_secret');
+    console.log(cookies);
+  });
+
+manager.on('newOffer', offer => {
+  // check if offer is from trusted user
+    if (offer.partner.getSteamID64() === config.trustedUser) {
+      offer.accept((err, status) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(`Accepted offer. Status: ${status}.`);
+        }
+      });
+    }
+  });
 
   // check if trade offer is donation
   if (offer.itemsToGive.length === 0) {
@@ -80,9 +82,8 @@ client.on("friendRelationship", (steamid, relationship) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(`Added User: ${personalName}`);
-      }
-    });
-    client.chatMessage(steamid, "Hello there! Thanks for adding me!");
-  }
-});
+      console.log(inventory);
+    }
+  });
+}
+}
