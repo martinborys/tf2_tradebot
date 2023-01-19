@@ -25,54 +25,53 @@ const logOnOptions = {
 
 client.logOn(logOnOptions);
 
-client.on('loggedOn', () => {
-    console.log('Logged into Steam');
-  
-    client.setPersona(SteamUser.EPersonaState.Online);
-    client.gamesPlayed(440);
+client.on("loggedOn", () => {
+  console.log("Logged into Steam");
 
-    client.getAuthSecret((err, secret, key) => {
-      if(err){
-        console.log(err);
-      } else {
-        console.log(secret);
-        console.log(key);
-      }
-    });
-  });
+  client.setPersona(SteamUser.EPersonaState.Online);
+  client.gamesPlayed(440);
 
-client.on('webSession', (sessionid, cookies) => {
-    manager.setCookies(cookies);
-  
-    community.setCookies(cookies);
-    community.startConfirmationChecker(10000, 'identity_secret');
-    console.log(cookies);
-  });
-
-manager.on('newOffer', offer => {
-  // check if offer is from trusted user
-    if (offer.partner.getSteamID64() === config.trustedUser) {
-      offer.accept((err, status) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(`Accepted offer. Status: ${status}.`);
-        }
-      });
+  client.getAuthSecret((err, secret, key) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(secret);
+      console.log(key);
     }
   });
+});
 
-  // check if trade offer is donation
-  if (offer.itemsToGive.length === 0) {
+client.on("webSession", (sessionid, cookies) => {
+  manager.setCookies(cookies);
+
+  community.setCookies(cookies);
+  community.startConfirmationChecker(10000, "identity_secret");
+  console.log(cookies);
+});
+
+manager.on("newOffer", (offer) => {
+  // check if offer is from trusted user
+  if (offer.partner.getSteamID64() === config.trustedUser) {
     offer.accept((err, status) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(`Donation accepted. Status: ${status}.`);
+        console.log(`Accepted offer. Status: ${status}.`);
       }
     });
   }
 });
+
+// check if trade offer is donation
+if (offer.itemsToGive.length === 0) {
+  offer.accept((err, status) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(`Donation accepted. Status: ${status}.`);
+    }
+  });
+}
 
 // on friend request, accept user and send message
 client.on("friendRelationship", (steamid, relationship) => {
@@ -82,8 +81,8 @@ client.on("friendRelationship", (steamid, relationship) => {
       if (err) {
         console.log(err);
       } else {
-      console.log(inventory);
-    }
-  });
-}
-}
+        console.log(`Successfully added user: ${personalName}`);
+      }
+    });
+  }
+});
