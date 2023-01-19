@@ -1,11 +1,47 @@
 var requests = require("request");
-const config = require("config.json");
+var JSON = require("json");
+const config = require("./config.json");
 
-const key = config.backpackKey;
-const item = "";
-var url = "https://backpack.tf/api/classifieds/search/v1?";
+var url = "/classifieds/search/v1?";
 
-url += `&item=${item}`;
-url += `&key=${key}`;
+class BackpackAPIService {
+  constructor(key) {
+    this.key = key;
+    this.baseUrl = "https://backpack.tf/api";
+  }
 
-requests(url);
+  getCurrencies() {
+    var url = this.baseUrl + "/IGetCurrencies/v1?";
+
+    url += `key=${this.key}`;
+
+    requests(url, (err, response, body) => {
+      if (err) {
+        console.log(err);
+      } else {
+        return body;
+      }
+    });
+  }
+
+  searchClassifieds(buyOrSell, itemName, quality) {
+    var url = this.baseUrl + "/classifieds/search/v1?";
+
+    url +=
+      `key=${this.key}` +
+      `&intent=${buyOrSell}` +
+      `&item=${item}` +
+      `&quality=${quality}`;
+
+    requests(url, (err, response, body) => {
+      if (err) {
+        console.log(err);
+      } else {
+        return body;
+      }
+    });
+  }
+}
+
+const backpackAPIService = new BackpackAPIService(config.backpackKey);
+console.log(JSON.stringify(backpackAPIService.getCurrencies()));
