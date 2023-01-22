@@ -1,5 +1,4 @@
 var requests = require("request");
-var JSON = require("json");
 const config = require("./config.json");
 
 var url = "/classifieds/search/v1?";
@@ -10,7 +9,7 @@ class BackpackAPIService {
     this.baseUrl = "https://backpack.tf/api";
   }
 
-  getCurrencies() {
+  async getCurrencies() {
     var url = this.baseUrl + "/IGetCurrencies/v1?";
 
     url += `key=${this.key}`;
@@ -36,6 +35,7 @@ class BackpackAPIService {
     requests(url, (err, response, body) => {
       if (err) {
         console.log(err);
+        return null;
       } else {
         return body;
       }
@@ -44,4 +44,5 @@ class BackpackAPIService {
 }
 
 const backpackAPIService = new BackpackAPIService(config.backpackKey);
-console.log(JSON.stringify(backpackAPIService.getCurrencies()));
+var currencies = backpackAPIService.getCurrencies();
+console.log(JSON.stringify(currencies));
