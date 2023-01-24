@@ -9,40 +9,48 @@ class BackpackAPIService {
     this.baseUrl = "https://backpack.tf/api";
   }
 
-  async getCurrencies() {
-    var url = this.baseUrl + "/IGetCurrencies/v1?";
+  getCurrencies() {
+    return new Promise((resolve, reject) => {
+      var url = this.baseUrl + "/IGetCurrencies/v1?";
 
-    url += `key=${this.key}`;
+      url += `key=${this.key}`;
 
-    requests(url, (err, response, body) => {
-      if (err) {
-        console.log(err);
-      } else {
-        return body;
-      }
+      requests(url, (err, response, body) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
+          resolve(body);
+        }
+      });
     });
   }
 
-  searchClassifieds(buyOrSell, itemName, quality) {
-    var url = this.baseUrl + "/classifieds/search/v1?";
+  searchClassifieds(itemName, quality, buyOrSell = "dual") {
+    return new Promise((resolve, reject) => {
+      var url = this.baseUrl + "/classifieds/search/v1?";
 
-    url +=
-      `key=${this.key}` +
-      `&intent=${buyOrSell}` +
-      `&item=${item}` +
-      `&quality=${quality}`;
+      url +=
+        `key=${this.key}` +
+        `&intent=${buyOrSell}` +
+        `&item=${itemName}` +
+        `&quality=${quality}`;
 
-    requests(url, (err, response, body) => {
-      if (err) {
-        console.log(err);
-        return null;
-      } else {
-        return body;
-      }
+      requests(url, (err, response, body) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        } else {
+          resolve(body);
+        }
+      });
     });
   }
 }
 
-const backpackAPIService = new BackpackAPIService(config.backpackKey);
-var currencies = backpackAPIService.getCurrencies();
-console.log(JSON.stringify(currencies));
+async function main() {
+  const backpackAPIService = new BackpackAPIService(config.backpackKey);
+  var currencies = await backpackAPIService.getCurrencies();
+  console.log(currencies);
+}
+main();
