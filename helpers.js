@@ -3,6 +3,7 @@ module.exports = {
 };
 
 function printInventory(manager) {
+  console.log("Printing Inventory...");
   manager.getInventoryContents(440, 2, true, (err, inventory) => {
     if (err) {
       console.log(err);
